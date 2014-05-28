@@ -1,0 +1,36 @@
+{
+    "appKeys": {
+        "Left": 9,
+        "Name": 8,
+        "Right": 10,
+        "BG": 7
+    },
+    "longName": "PebblePong 2.0",
+    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
+    "versionLabel": "2.1",
+    "companyName": "kije",
+    "resources": {
+        "media": [
+            {
+                "file": "images/icon.png",
+                "type": "png",
+                "name": "APP_ICON",
+                "menuIcon": true
+            },
+            {
+                "file": "fonts/Orbitron_Bold.ttf",
+                "type": "font",
+                "name": "FONT_ORBITRON_BOLD_15",
+                "characterRegex": "[0-9a-zA-Z:\\.,]"
+            }
+        ]
+    },
+    "watchapp": {
+        "watchface": false
+    },
+    "capabilities": [
+        ""
+    ],
+    "shortName": "PebblePong",
+    "versionCode": 2
+}
