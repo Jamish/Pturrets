@@ -7,8 +7,8 @@
 #define SCREENW 144
 #define SCREENH 168
 	
-#define FG_COLOR GColorBlack
-#define BG_COLOR GColorWhite
+#define FG_COLOR GColorWhite
+#define BG_COLOR GColorBlack
 
 typedef struct PrecisePoint PrecisePoint;
 typedef struct PreciseSize PreciseSize;
@@ -24,20 +24,12 @@ struct PreciseSize {
 	float h;
 };
 
-
-
-
 struct PreciseRect {
 	PrecisePoint origin;
 	PreciseSize size;
 };
 
-
 void game_deinit(void);
 void game_init(void);
-
-
-
-
 
 #endif

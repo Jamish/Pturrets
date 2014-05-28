@@ -23,12 +23,12 @@ void draw_game_field(struct Layer *layer, GContext *ctx) {
     graphics_context_set_fill_color (ctx, FG_COLOR);   
 
     // Frame
-    //graphics_draw_rect(ctx, bounds);
+    graphics_draw_rect(ctx, bounds);
 
 
 	
 	// Do Shit
-	graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(0,0,SCREENW,SCREENW));
+	graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(1,1,SCREENW,SCREENW));
 	
 	
 
@@ -101,8 +101,9 @@ void game_init(void) {
 	
     window_set_click_config_provider(window, (ClickConfigProvider) config_provider); // Only till the Accelometer-API is released
 
+	window_set_fullscreen(window, true);
     window_set_background_color(window, BG_COLOR);
-    window_stack_push(window, true /* Animated */);
+    window_stack_push(window, false /* Not Animated */);
 	
 	button_up_pressed=0;
     button_down_pressed=0;
@@ -118,7 +119,8 @@ void game_init(void) {
 	
 	
 	// Game Layer
-	gameLayer = layer_create(GRect(0, 0, SCREENW, SCREENH));
+	//gameLayer = layer_create(GRect(0, SCREENH-terrain_height, terrain_height, terrain_width));
+	gameLayer = layer_create(GRect((SCREENW - terrain_width)/2, (SCREENW - terrain_width)/2, terrain_height+2, terrain_width+2));
     layer_set_update_proc(gameLayer, draw_game_field);
     layer_add_child(window_get_root_layer(window), (Layer *)gameLayer);
 	

@@ -18,20 +18,16 @@ void terrain_generate(void) {
 		height_map[i] = 0;
 	}
 	
-	
+	// Seed
 	srand(time(NULL));
 	
-
-	
+	// Starting range value
 	int range = terrain_height/2 - 30;
 	
+	// Value of 1 creates varied terrain. Value of 2+ creates smooth terrain.
+	float range_divisor = 1.2F;
 	
-	for (int i = 0; i < total_segments; i++)
-	{
-		height_map[i] = 0;
-	}
-	
-	// 2^3 = 8
+	// 2^7 = 128
 	// This is the number of times we will divide the line into midpoints.
 	for (int p = 0; p < 7; p++) {
 		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Range is %d", range);
@@ -54,23 +50,13 @@ void terrain_generate(void) {
 				height_map[start+len-i] += ptDisp;
 			}
         }
-        range = (int)(range / 1.2F);
-		
+        range = (int)(range / range_divisor);
     }
-	
 
-	/*
+
+	// Draw the terrain at the height of each segment
 	for (int i = 0; i < total_segments; i++) {
-		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Terrain point");
-		
-		app_log(APP_LOG_LEVEL_DEBUG_VERBOSE, __FILE__ , __LINE__ , "Terrain point:  %d ", height_map[i]);
-	}
-	*/
-	
-	// Modify the bitmap??
-	// Width of terrain slice
-	for (int i = 0; i < total_segments; i++) {
-		int rect_x = i+8;
+		int rect_x = i;
 		int rect_w = 2;
 		int rect_y = terrain_height/2 + height_map[i]; // Height of terrain is the height_map displacement from the middle of the space
 		int rect_h = terrain_height - rect_y; //Height stretches to bottom
@@ -82,12 +68,8 @@ void terrain_generate(void) {
 	//Draw a circle in the bottom corner to test collapsing terrain
 	GPoint origin = {64, 128};
 	bmpFillCircle(&terrain_bitmap, origin, 25, terrain_not_color);
-	
-	/*for (int i = 0; i < terrain_height; i++) {
-		for (int j = 0; j < terrain_width/2; j++) {
-			bmpPutPixel(&terrain_bitmap, i, j, GColorWhite);
-		}
-	}*/
+	GPoint origin2 = {64, 95};
+	bmpFillCircle(&terrain_bitmap, origin2, 25, terrain_not_color);
 }
 
 // Shifts every free-standing terrain pixel down by one
