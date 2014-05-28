@@ -2,10 +2,10 @@
 #include <math.h>
 #include "game_object.h"
 	
-void go_GameObject_Update(go_GameObject *go) {
+void go_GameObject_Update(go_GameObject go) {
 	
 	// Adjust for gravity
-	go.velocity.y += gravity;
+	go.velocity.y += go.gravity;
 	
 	// Adjust position
 	go.position.x += go.velocity.x;
