@@ -2,6 +2,7 @@
 #include <math.h>
 #include "main.h"
 #include "game.h"
+#include "utils.h"
 
 Window *window;
 TextLayer *titleLayer;
@@ -13,6 +14,43 @@ Layer *gameLayer;
 
 int button_up_pressed;
 int button_down_pressed;
+
+GBitmap *btBmp;
+
+void draw_game_field(struct Layer *layer, GContext *ctx) {
+    GRect bounds = layer_get_bounds(layer);
+    graphics_context_set_stroke_color (ctx, FG_COLOR); 
+    graphics_context_set_fill_color (ctx, FG_COLOR);   
+
+    // Frame
+    graphics_draw_rect(ctx, bounds);
+
+	
+	bmpFill(&bitmap, GColorBlack);
+	// Modify the bitmap??
+	for (int i = 0; i < SCREENW; i++) {
+		for (int j = 0; j < SCREENW/2; j++) {
+			bmpPutPixel(&bitmap, i, j, GColorWhite);
+		}
+	}
+	
+	
+	// Do Shit
+	graphics_draw_bitmap_in_rect(ctx, &bitmap, GRect(0,0,SCREENW,SCREENW));
+	
+	
+
+    // update score
+    /*static char buffer[45] = "";
+
+    snprintf(
+        buffer, 
+        sizeof(buffer),
+        "%d | %d",
+        pl1.score, pl2.score
+    );
+    text_layer_set_text(scoreLayer, buffer);*/
+}
 
 
 void up_up_handler(ClickRecognizerRef recognizer, Window *window) {
@@ -54,9 +92,8 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 }
 
 void handle_timer_timeout(void *data) {
-    //move_ball();
-    layer_mark_dirty(gameLayer);
-	
+    //game_update();
+    //layer_mark_dirty(gameLayer);
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
 }
 
@@ -74,6 +111,31 @@ void game_init(void) {
 	
 	button_up_pressed=0;
     button_down_pressed=0;
+	
+	// Title Layer
+    titleLayer = text_layer_create(GRect(0,0,144,25));
+    /*text_layer_set_text_alignment(titleLayer, GTextAlignmentCenter);
+    text_layer_set_text(titleLayer, "PebblePong");
+    text_layer_set_font(titleLayer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ORBITRON_BOLD_15)));
+    text_layer_set_background_color(titleLayer, BG_COLOR);
+    text_layer_set_text_color(titleLayer, FG_COLOR);
+    layer_add_child(window_get_root_layer(window), (Layer *)titleLayer);*/
+	
+	
+	// Game Layer
+	gameLayer = layer_create(GRect(0, 0, SCREENW, SCREENH));
+    layer_set_update_proc(gameLayer, draw_game_field);
+    layer_add_child(window_get_root_layer(window), (Layer *)gameLayer);
+
+    //validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
+    //validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
+
+	
+    //inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
+    //layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(inverter_layer));
+	//layer_set_hidden(inverter_layer_get_layer(inverter_layer), !option.invert);
+	
+	
 	/*
 	level = 1;
 	
@@ -84,14 +146,7 @@ void game_init(void) {
 	accel_service_peek(&calibratedAccelData); //Calibrate data to initial position
 	
     
-    // Title Layer
-    titleLayer = text_layer_create(GRect(0,0,144,25));
-    text_layer_set_text_alignment(titleLayer, GTextAlignmentCenter);
-    text_layer_set_text(titleLayer, "PebblePong");
-    text_layer_set_font(titleLayer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ORBITRON_BOLD_15)));
-    text_layer_set_background_color(titleLayer, BG_COLOR);
-    text_layer_set_text_color(titleLayer, FG_COLOR);
-    layer_add_child(window_get_root_layer(window), (Layer *)titleLayer);
+    
 
     //Score Layer
     scoreLayer = text_layer_create(GRect(0,22,144,19));
@@ -101,30 +156,6 @@ void game_init(void) {
     text_layer_set_background_color(scoreLayer, BG_COLOR);
     text_layer_set_text_color(scoreLayer, FG_COLOR);
     layer_add_child(window_get_root_layer(window), (Layer *)scoreLayer);
-
-
-	
-    // Game Field
-
-    gameLayer = layer_create(GRect(5, 40, 134, 90));
-    layer_set_update_proc(gameLayer, draw_game_field);
-    layer_add_child(window_get_root_layer(window), (Layer *)gameLayer);
-
-    validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
-    validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
-
-	
-    inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
-    layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(inverter_layer));
-	layer_set_hidden(inverter_layer_get_layer(inverter_layer), !option.invert);
-	
-    // Player 
-
-    init_player(&pl1, WEST, AI);
-    init_player(&pl2, EAST, HUMAN);
-
-    // Ball 
-    init_ball(&ball);
 	*/
     // Setup timer
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
@@ -135,7 +166,7 @@ void game_deinit(void) {
 	app_timer_cancel(timer_handle);
     //text_layer_destroy(titleLayer);
     //text_layer_destroy(scoreLayer);
-	//layer_destroy(gameLayer);
+	layer_destroy(gameLayer);
 	//inverter_layer_destroy(inverter_layer);
 	window_destroy(window);
 	//accel_data_service_unsubscribe();
