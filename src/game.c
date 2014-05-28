@@ -3,6 +3,7 @@
 #include "main.h"
 #include "game.h"
 #include "terrain.h"
+#include "game_object.h"
 
 Window *window;
 TextLayer *titleLayer;

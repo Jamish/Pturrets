@@ -10,24 +10,7 @@
 #define FG_COLOR GColorWhite
 #define BG_COLOR GColorBlack
 
-typedef struct PrecisePoint PrecisePoint;
-typedef struct PreciseSize PreciseSize;
-typedef struct PreciseRect PreciseRect;
 
-struct PrecisePoint {
-    float x;
-    float y;
-};
-
-struct PreciseSize {
-	float w;
-	float h;
-};
-
-struct PreciseRect {
-	PrecisePoint origin;
-	PreciseSize size;
-};
 
 void game_deinit(void);
 void game_init(void);
