@@ -6,11 +6,11 @@
 
 #define SCREENW 144
 #define SCREENH 168
+
+#define MAXGAMEOBJECTS 64
 	
 #define FG_COLOR GColorWhite
 #define BG_COLOR GColorBlack
-
-
 
 void game_deinit(void);
 void game_init(void);

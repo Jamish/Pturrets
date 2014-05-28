@@ -5,18 +5,23 @@
 #include "terrain.h"
 #include "game_object.h"
 
+// Layers
 Window *window;
 TextLayer *titleLayer;
 TextLayer *scoreLayer;
-
-
-AppTimer *timer_handle;
 Layer *gameLayer;
 
+// Misc
+AppTimer *timer_handle;
+
+
+// Controls
 int button_up_pressed;
 int button_down_pressed;
 
-GBitmap *btBmp;
+// Actors
+GO_GameObject game_objects[MAXGAMEOBJECTS];
+
 
 void draw_game_field(struct Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
@@ -26,8 +31,6 @@ void draw_game_field(struct Layer *layer, GContext *ctx) {
     // Frame
     graphics_draw_rect(ctx, bounds);
 
-
-	
 	// Do Shit
 	graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(1,1,SCREENW,SCREENW));
 	
@@ -85,12 +88,43 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 }
 
 void handle_timer_timeout(void *data) {
-    //game_update();
+    
+	// Call every game object's Update and update_handler (additional functionality) function
+	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
+		GO_GameObject_Update(game_objects[i]);
+		//game_objects[i].update_handler(&game_objects[i]);
+		
+	}
+	
+	
+	
+	// Update the terrain and dirty the gameLayer if necessary. (maybe make TerrainLayer later?)
 	if (terrain_update()) {
 		layer_mark_dirty(gameLayer);
 	}
     
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
+}
+
+
+
+// Initialize Game Object - move to GO_Manager
+void initialize_game_object(GO_GameObject *go) {
+	(*go) = (GO_GameObject) {
+		{ 0, 0 }, // position
+		{ 0, 0 }, // vel
+		{ 0, 0 }, // size
+		0, // grav
+		0, // active
+		1 // empty
+	};
+}
+
+// Initialize All Game Objects - move to GO_Manager
+void initialize_game_objects() {
+	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
+		initialize_game_object(&game_objects[i]);
+	}
 }
 
 void game_init(void) {
@@ -110,7 +144,7 @@ void game_init(void) {
     button_down_pressed=0;
 	
 	// Title Layer
-    titleLayer = text_layer_create(GRect(0,0,144,25));
+    //titleLayer = text_layer_create(GRect(0,0,144,25));
     /*text_layer_set_text_alignment(titleLayer, GTextAlignmentCenter);
     text_layer_set_text(titleLayer, "PebblePong");
     text_layer_set_font(titleLayer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ORBITRON_BOLD_15)));
@@ -127,6 +161,9 @@ void game_init(void) {
 	
 	// Initialize the terrain
 	terrain_generate();
+	
+	// Initialize the actors
+	initialize_game_objects();
 
     //validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
     //validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
