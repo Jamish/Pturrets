@@ -2,7 +2,7 @@
 #include <math.h>
 #include "main.h"
 #include "game.h"
-#include "utils.h"
+#include "terrain.h"
 
 Window *window;
 TextLayer *titleLayer;
@@ -25,18 +25,10 @@ void draw_game_field(struct Layer *layer, GContext *ctx) {
     // Frame
     graphics_draw_rect(ctx, bounds);
 
-	
-	bmpFill(&bitmap, GColorBlack);
-	// Modify the bitmap??
-	for (int i = 0; i < SCREENW; i++) {
-		for (int j = 0; j < SCREENW/2; j++) {
-			bmpPutPixel(&bitmap, i, j, GColorWhite);
-		}
-	}
-	
+	terrain_generate();
 	
 	// Do Shit
-	graphics_draw_bitmap_in_rect(ctx, &bitmap, GRect(0,0,SCREENW,SCREENW));
+	graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(0,0,SCREENW,SCREENW));
 	
 	
 
