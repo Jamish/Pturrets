@@ -33,7 +33,7 @@ void terrain_generate(void) {
 	
 	// 2^3 = 8
 	// This is the number of times we will divide the line into midpoints.
-	for (int p = 0; p < 10; p++) {
+	for (int p = 0; p < 6; p++) {
         int segs = pow(p, 2); // Number of segments in this current iteration.
         for (int j = 0; j < segs; j++) {
             int lo = -range;
