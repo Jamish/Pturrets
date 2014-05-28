@@ -6,9 +6,14 @@
 // Generates the terrain using Midpoint Displacement
 void terrain_generate(void);
 
+// Updates the terrain
+bool terrain_update(void);
+
 // Returns a pointer to the terrain bitmap
 GBitmap* terrain_get_bitmap(void);
 
+
+	
 static uint8_t terrain_width = 144;
 static uint8_t terrain_height = 144;
 static GColor terrain_color = GColorBlack;

@@ -23,9 +23,9 @@ void draw_game_field(struct Layer *layer, GContext *ctx) {
     graphics_context_set_fill_color (ctx, FG_COLOR);   
 
     // Frame
-    graphics_draw_rect(ctx, bounds);
+    //graphics_draw_rect(ctx, bounds);
 
-	terrain_generate();
+
 	
 	// Do Shit
 	graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(0,0,SCREENW,SCREENW));
@@ -85,7 +85,10 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 
 void handle_timer_timeout(void *data) {
     //game_update();
-    //layer_mark_dirty(gameLayer);
+	if (terrain_update()) {
+		layer_mark_dirty(gameLayer);
+	}
+    
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
 }
 
@@ -118,6 +121,9 @@ void game_init(void) {
 	gameLayer = layer_create(GRect(0, 0, SCREENW, SCREENH));
     layer_set_update_proc(gameLayer, draw_game_field);
     layer_add_child(window_get_root_layer(window), (Layer *)gameLayer);
+	
+	// Initialize the terrain
+	terrain_generate();
 
     //validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
     //validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
