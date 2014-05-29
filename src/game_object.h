@@ -46,20 +46,26 @@ struct GO_GameObject {
 	float gravity;
 	bool active; // Active game object. Inactive objects will not be updated.
 	bool empty; // Empty game object. Used by Game Object Manager
-	GContext* ctx;
+	Layer* layer;
 	//void(*update_handler)(GO_GameObject *); // Function pointer for additional update stuff
 };
 
 
 
 // Updates the game object based on gravity, velocity, and position.
-void GO_GameObject_Update(GO_GameObject go);
+void GO_GameObject_Update(GO_GameObject* go);
 
 // Updates all the game objects at once
 void GO_GameObject_Update_All();
 
+// Draws the game object
+void GO_GameObject_Draw(GO_GameObject* go, GContext* ctx);
+
+// Draws all game objects using the given context if their layer matches the argument layer
+void GO_GameObject_Draw_All(Layer* layer, GContext* ctx);
+
 // Initialize Game Object to empty
-void GO_Init_Empty(GO_GameObject *go, int id);
+void GO_Init_Empty(GO_GameObject* go, int id);
 
 // Initialize All Game Objects to empty
 void GO_Init_All();
@@ -73,6 +79,9 @@ GO_GameObject* GO_New();
 // Returns the game object
 GO_GameObject* GO_Get(int id);
 
+
+void player_update(GO_GameObject* go);
+void player_draw(GO_GameObject* go, GContext* ctx);
 
 
 

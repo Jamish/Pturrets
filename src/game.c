@@ -50,9 +50,14 @@ void draw_background_layer(struct Layer *layer, GContext *ctx) {
 }
 
 void draw_sprite_layer(struct Layer *layer, GContext *ctx) {
+	//app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Sprite layer drawing");
+	
 	GRect bounds = layer_get_bounds(layer);
-    graphics_context_set_stroke_color (ctx, FG_COLOR); 
+    graphics_context_set_stroke_color (ctx, BG_COLOR); 
     graphics_context_set_fill_color (ctx, FG_COLOR);   
+	
+	// Draw all the game objects that are in this layer using ctx
+	GO_GameObject_Draw_All(layer, ctx);
 
 
 	// Do Shit
@@ -103,6 +108,9 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 void handle_timer_timeout(void *data) {
 	GO_GameObject_Update_All();
 	
+	// Dirty the sprite layer each frame to redraw
+	layer_mark_dirty(spriteLayer);
+	
 	// Update the terrain and dirty the backgroundLayer if necessary. (maybe make TerrainLayer later?)
 	if (terrain_update()) {
 		layer_mark_dirty(backgroundLayer);
@@ -116,10 +124,12 @@ GO_GameObject* initialize_player() {
 	GO_GameObject* go = GO_New();
 	if (go != NULL) {
 		go->type = GO_T_PLAYER;
-		go->gravity = 1;
-		go->size.w = 3;
-		go->size.h = 3;
-		
+		go->gravity = 0.15F;
+		go->size.w = 6;
+		go->size.h = 6;
+		go->position.x = 20;
+		go->position.y = 20;
+		go->layer = spriteLayer;		
 		return go;
 	}
 	
@@ -169,7 +179,10 @@ void game_init(void) {
 	
 	// Create Player
 	player = initialize_player();
+	
+	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Player is on layer %p, spriteLayer is %p", player->layer, spriteLayer);
 
+	
     //validBallField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(backgroundLayer).size.h-BALL_SIZE_HEIGHT)-1);
     //validPaddleField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(backgroundLayer).size.h-PADDLE_HEIGHT)-2);
 
