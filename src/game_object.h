@@ -9,6 +9,7 @@ typedef struct GO_PreciseSize GO_PreciseSize;
 typedef struct GO_PreciseRect GO_PreciseRect;
 typedef struct GO_GameObject GO_GameObject;
 
+// Represents all the types of Game Objects. Needed for different behaviors. 
 enum GO_Type {
 	GO_T_BASE,
 	GO_T_PLAYER,
@@ -37,6 +38,7 @@ struct GO_PreciseRect {
 };
 
 struct GO_GameObject {
+	int id;
 	GO_Type type;
 	GO_PrecisePoint position;
 	GO_PreciseVelocity velocity;
@@ -47,8 +49,25 @@ struct GO_GameObject {
 	//void(*update_handler)(GO_GameObject *); // Function pointer for additional update stuff
 };
 
+
+
 // Updates the game object based on gravity, velocity, and position.
 void GO_GameObject_Update(GO_GameObject go);
+
+// Updates all the game objects at once
+void GO_GameObject_Update_All();
+
+// Initialize Game Object to empty
+void GO_Init_Empty(GO_GameObject *go, int id);
+
+// Initialize All Game Objects to empty
+void GO_Init_All();
+
+// Destroys a Game Object (well, just marks it inactive)
+void GO_Destroy(int id);
+
+// Returns a pointer to an empty Game Object to work with.
+GO_GameObject* GO_New();
 
 
 

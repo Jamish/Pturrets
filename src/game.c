@@ -19,8 +19,8 @@ AppTimer *timer_handle;
 int button_up_pressed;
 int button_down_pressed;
 
-// Actors
-GO_GameObject game_objects[MAXGAMEOBJECTS];
+// Managed Actors
+GO_GameObject *player;
 
 
 void draw_game_field(struct Layer *layer, GContext *ctx) {
@@ -88,14 +88,8 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 }
 
 void handle_timer_timeout(void *data) {
+	GO_GameObject_Update_All();
 	
-	// Call every game object's Update and update_handler (additional functionality) function
-	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
-		GO_GameObject_Update(game_objects[i]);
-		//game_objects[i].update_handler(&game_objects[i]);
-		
-	}
-
 	// Update the terrain and dirty the gameLayer if necessary. (maybe make TerrainLayer later?)
 	if (terrain_update()) {
 		layer_mark_dirty(gameLayer);
@@ -105,48 +99,8 @@ void handle_timer_timeout(void *data) {
 }
 
 
-
-// Initialize Game Object - move to GO_Manager
-void initialize_game_object(GO_GameObject *go) {
-	(*go) = (GO_GameObject) {
-		GO_T_BASE,
-		{ 0, 0 }, // position
-		{ 0, 0 }, // vel
-		{ 0, 0 }, // size
-		0, // grav
-		0, // active
-		1 // empty
-	};
-}
-
-// Initialize All Game Objects - move to GO_Manager
-void initialize_game_objects() {
-	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
-		initialize_game_object(&game_objects[i]);
-	}
-}
-
-// Destroys a Game Object (well, just marks it inactive)
-
-// Returns a pointer to an empty Game Object to work with.
-GO_GameObject* new_game_object() {
-	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
-		GO_GameObject go = game_objects[i];
-		if (go.empty) {
-			app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "GO init #%d", i);
-			go.empty = 0;
-			go.active = 1;
-			return &game_objects[i];
-		}
-	}
-	
-	// Return null if the game is full.
-	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Game is full.");
-	return NULL;
-}
-
 GO_GameObject* initialize_player() {
-	GO_GameObject* go = new_game_object();
+	GO_GameObject* go = GO_New();
 	if (go != NULL) {
 		go->type = GO_T_PLAYER;
 		go->gravity = 1;
@@ -158,6 +112,7 @@ GO_GameObject* initialize_player() {
 	
 	return NULL;
 }
+
 
 void game_init(void) {
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Game Init");
@@ -193,10 +148,10 @@ void game_init(void) {
 	terrain_generate();
 	
 	// Initialize the actors
-	initialize_game_objects();
+	GO_Init_All();
 	
 	// Create Player
-	initialize_player();
+	player = initialize_player();
 
     //validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
     //validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
