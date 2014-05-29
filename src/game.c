@@ -4,7 +4,9 @@
 #include "game.h"
 #include "terrain.h"
 #include "game_object.h"
-
+#include "obj_player.h"
+#include "obj_projectile.h"
+	
 // Layers
 Window *window;
 TextLayer *titleLayer;
@@ -19,6 +21,16 @@ AppTimer *timer_handle;
 // Controls
 int button_up_pressed;
 int button_down_pressed;
+int button_center_pressed;
+
+// Step
+int step = 0;
+
+// Sensitivity. Used so the longer a button is pressed, the more drastic it's effect (for changing angle/power)
+int sensitivity_start_step; // The step count the timer was initiated on
+int sensitivity_accel = 1; // Acceleration of amount
+int sensitivity_max = 5;
+int sensitivity_frames = 12; //  Frames
 
 // Managed Actors that we always want a reference to (no lookup)
 GO_GameObject *player;
@@ -66,27 +78,29 @@ void draw_sprite_layer(struct Layer *layer, GContext *ctx) {
 
 
 void up_up_handler(ClickRecognizerRef recognizer, Window *window) {
-    button_up_pressed=0;
+    button_up_pressed = 0;
 }
 
 void up_down_handler(ClickRecognizerRef recognizer, Window *window) {
-    button_up_pressed=1;
+    button_up_pressed = 1;
+	sensitivity_start_step = step;
 }
 
-
 void down_up_handler(ClickRecognizerRef recognizer, Window *window) {
-    button_down_pressed=0;
+    button_down_pressed = 0;
 }
 
 void down_down_handler(ClickRecognizerRef recognizer, Window *window) {
-    button_down_pressed=1;
+    button_down_pressed = 1;
+	sensitivity_start_step = step;
 }
 
-void select_down(ClickRecognizerRef recognizer, Window *window) {
+void select_up_handler(ClickRecognizerRef recognizer, Window *window) {
+    button_center_pressed = 0;
 }
 
-void select_up(ClickRecognizerRef recognizer, Window *window) {
-    
+void select_down_handler(ClickRecognizerRef recognizer, Window *window) {
+	button_center_pressed = 1;
 }
 
 
@@ -94,7 +108,7 @@ void config_provider(void *context) {
     window_set_click_context(BUTTON_ID_UP, context);
     window_raw_click_subscribe(BUTTON_ID_UP, (ClickHandler)up_down_handler, (ClickHandler)up_up_handler, context);
     window_raw_click_subscribe(BUTTON_ID_DOWN, (ClickHandler)down_down_handler, (ClickHandler)down_up_handler, context);
-	window_raw_click_subscribe(BUTTON_ID_SELECT, (ClickHandler)select_down, (ClickHandler)select_up, context);
+	window_raw_click_subscribe(BUTTON_ID_SELECT, (ClickHandler)select_down_handler, (ClickHandler)select_up_handler, context);
 	
 
 }
@@ -108,6 +122,25 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
 void handle_timer_timeout(void *data) {
 	GO_GameObject_Update_All();
 	
+	OBJ_Player_Data* go_data = (OBJ_Player_Data*)player->data;
+	
+	// Calculate the amount the angle should change
+	int steps_elapsed = (step - sensitivity_start_step) / sensitivity_frames;
+	int angle_delta = 1 + steps_elapsed;
+	angle_delta = angle_delta > sensitivity_max ? sensitivity_max : angle_delta;
+	
+	if (button_down_pressed) {
+		go_data->angle += angle_delta;
+	}
+	
+	if (button_up_pressed) {
+		go_data->angle -= angle_delta;
+	}
+	
+	if (button_center_pressed) {
+		OBJ_Projectile_Init(spriteLayer, go_data->turret_tip.x, go_data->turret_tip.y, go_data->angle, go_data->power);
+	}
+	
 	// Dirty the sprite layer each frame to redraw
 	layer_mark_dirty(spriteLayer);
 	
@@ -116,25 +149,10 @@ void handle_timer_timeout(void *data) {
 		layer_mark_dirty(backgroundLayer);
 	}
     
+	step++;
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
 }
 
-
-GO_GameObject* initialize_player() {
-	GO_GameObject* go = GO_New();
-	if (go != NULL) {
-		go->type = GO_T_PLAYER;
-		go->gravity = 0.15F;
-		go->size.w = 6;
-		go->size.h = 6;
-		go->position.x = 20;
-		go->position.y = 20;
-		go->layer = spriteLayer;		
-		return go;
-	}
-	
-	return NULL;
-}
 
 // GAME INIT ======================================================
 void game_init(void) {
@@ -178,7 +196,7 @@ void game_init(void) {
 	GO_Init_All();
 	
 	// Create Player
-	player = initialize_player();
+	player = OBJ_Player_Init(spriteLayer);
 	
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Player is on layer %p, spriteLayer is %p", player->layer, spriteLayer);
 

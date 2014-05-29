@@ -3,6 +3,19 @@
 #include "terrain.h"
 #include "utils.h"
 	
+	
+// Some collision checking with terrain
+bool terrain_at_position(int x, int y) {
+	return bmpGetPixel(&terrain_bitmap, x, y) == terrain_color;
+}
+
+// Destroys terrain at the given position with radius
+void terrain_destroy_radius(int x, int y, int radius) {
+	//Draw a circle
+	GPoint origin = {x, y};
+	bmpFillCircle(&terrain_bitmap, origin, radius, terrain_not_color);
+}
+
 void terrain_generate(void) {
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Generating terrain.");
 	
@@ -64,12 +77,6 @@ void terrain_generate(void) {
 		GRect rect = { { rect_x, rect_y }, {rect_w, rect_h} };
 		bmpFillRect(&terrain_bitmap, rect, terrain_color);
 	}
-	
-	//Draw a circle in the bottom corner to test collapsing terrain
-	GPoint origin = {64, 128};
-	bmpFillCircle(&terrain_bitmap, origin, 25, terrain_not_color);
-	GPoint origin2 = {64, 95};
-	bmpFillCircle(&terrain_bitmap, origin2, 25, terrain_not_color);
 }
 
 // Shifts every free-standing terrain pixel down by one

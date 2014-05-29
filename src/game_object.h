@@ -1,6 +1,7 @@
 #ifndef GAME_OBJECT_H_INCLUDED
 #define GAME_OBJECT_H_INCLUDED
-	
+#include "game.h"
+
 
 typedef enum GO_Type GO_Type;
 typedef struct GO_PrecisePoint GO_PrecisePoint;
@@ -44,13 +45,13 @@ struct GO_GameObject {
 	GO_PreciseVelocity velocity;
 	GO_PreciseSize size;
 	float gravity;
+	bool in_air;
 	bool active; // Active game object. Inactive objects will not be updated.
 	bool empty; // Empty game object. Used by Game Object Manager
 	Layer* layer;
+	void* data; // Function pointer which returns a void pointer to the start of the struct (that must be allocated on instantiation) that contains data for classes that derive from GO_GameObject. When reading from this, you must cast it.
 	//void(*update_handler)(GO_GameObject *); // Function pointer for additional update stuff
 };
-
-
 
 // Updates the game object based on gravity, velocity, and position.
 void GO_GameObject_Update(GO_GameObject* go);
@@ -80,8 +81,7 @@ GO_GameObject* GO_New();
 GO_GameObject* GO_Get(int id);
 
 
-void player_update(GO_GameObject* go);
-void player_draw(GO_GameObject* go, GContext* ctx);
+
 
 
 

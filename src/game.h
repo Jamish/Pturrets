@@ -9,9 +9,16 @@
 
 #define MAXGAMEOBJECTS 64
 	
+#define GRAVITY 0.15F
+	
 #define FG_COLOR GColorWhite
 #define BG_COLOR GColorBlack
 
+typedef enum Direction Direction;
+enum Direction {
+    NORTH, SOUTH, EAST, WEST
+};
+	
 void game_deinit(void);
 void game_init(void);
 

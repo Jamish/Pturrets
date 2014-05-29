@@ -2,6 +2,11 @@
 #define TERRAIN_H_INCLUDED
 	
 	
+// Some collision checking with terrain
+bool terrain_at_position(int x, int y);
+
+// Destroys terrain at the given position with radius
+void terrain_destroy_radius(int x, int y, int radius);
 
 // Generates the terrain using Midpoint Displacement
 void terrain_generate(void);
