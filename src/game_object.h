@@ -1,11 +1,20 @@
 #ifndef GAME_OBJECT_H_INCLUDED
 #define GAME_OBJECT_H_INCLUDED
 	
+
+typedef enum GO_Type GO_Type;
 typedef struct GO_PrecisePoint GO_PrecisePoint;
 typedef struct GO_PreciseVelocity GO_PreciseVelocity;
 typedef struct GO_PreciseSize GO_PreciseSize;
 typedef struct GO_PreciseRect GO_PreciseRect;
 typedef struct GO_GameObject GO_GameObject;
+
+enum GO_Type {
+	GO_T_BASE,
+	GO_T_PLAYER,
+	GO_T_ENEMY,
+	GO_T_PROJECTILE
+};
 
 struct GO_PrecisePoint {
     float x;
@@ -28,6 +37,7 @@ struct GO_PreciseRect {
 };
 
 struct GO_GameObject {
+	GO_Type type;
 	GO_PrecisePoint position;
 	GO_PreciseVelocity velocity;
 	GO_PreciseSize size;

@@ -1,36 +1,36 @@
 {
-    "appKeys": {
-        "Left": 9,
-        "Name": 8,
-        "BG": 7,
-        "Right": 10
+    "watchapp": {
+        "watchface": false
     },
     "longName": "Scorched Wrist",
-    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
-    "versionLabel": "1.0.0",
+    "shortName": "Scorched Wrist",
     "companyName": "Jamish",
+    "capabilities": [
+        ""
+    ],
     "resources": {
         "media": [
             {
                 "file": "images/icon.png",
+                "menuIcon": true,
                 "type": "png",
-                "name": "APP_ICON",
-                "menuIcon": true
+                "name": "APP_ICON"
             },
             {
                 "file": "fonts/Orbitron_Bold.ttf",
+                "characterRegex": "[0-9a-zA-Z:\\.,]",
                 "type": "font",
-                "name": "FONT_ORBITRON_BOLD_15",
-                "characterRegex": "[0-9a-zA-Z:\\.,]"
+                "name": "FONT_ORBITRON_BOLD_15"
             }
         ]
     },
-    "watchapp": {
-        "watchface": false
+    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
+    "versionLabel": "1.0.0",
+    "appKeys": {
+        "Left": 9,
+        "Right": 10,
+        "BG": 7,
+        "Name": 8
     },
-    "capabilities": [
-        ""
-    ],
-    "shortName": "Scorched Wrist",
     "versionCode": 2
 }
