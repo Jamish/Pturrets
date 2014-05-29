@@ -46,6 +46,7 @@ struct GO_GameObject {
 	float gravity;
 	bool active; // Active game object. Inactive objects will not be updated.
 	bool empty; // Empty game object. Used by Game Object Manager
+	GContext* ctx;
 	//void(*update_handler)(GO_GameObject *); // Function pointer for additional update stuff
 };
 
@@ -68,6 +69,9 @@ void GO_Destroy(int id);
 
 // Returns a pointer to an empty Game Object to work with.
 GO_GameObject* GO_New();
+
+// Returns the game object
+GO_GameObject* GO_Get(int id);
 
 
 

@@ -9,7 +9,8 @@
 Window *window;
 TextLayer *titleLayer;
 TextLayer *scoreLayer;
-Layer *gameLayer;
+Layer *spriteLayer;
+Layer *backgroundLayer;
 
 // Misc
 AppTimer *timer_handle;
@@ -19,11 +20,11 @@ AppTimer *timer_handle;
 int button_up_pressed;
 int button_down_pressed;
 
-// Managed Actors
+// Managed Actors that we always want a reference to (no lookup)
 GO_GameObject *player;
 
-
-void draw_game_field(struct Layer *layer, GContext *ctx) {
+// TERRAIN REDRAW ======================================================
+void draw_background_layer(struct Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
     graphics_context_set_stroke_color (ctx, FG_COLOR); 
     graphics_context_set_fill_color (ctx, FG_COLOR);   
@@ -46,6 +47,16 @@ void draw_game_field(struct Layer *layer, GContext *ctx) {
         pl1.score, pl2.score
     );
     text_layer_set_text(scoreLayer, buffer);*/
+}
+
+void draw_sprite_layer(struct Layer *layer, GContext *ctx) {
+	GRect bounds = layer_get_bounds(layer);
+    graphics_context_set_stroke_color (ctx, FG_COLOR); 
+    graphics_context_set_fill_color (ctx, FG_COLOR);   
+
+
+	// Do Shit
+	//graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(1,1,SCREENW,SCREENW));
 }
 
 
@@ -87,12 +98,14 @@ void handle_accel(AccelData *accel_data, uint32_t num_samples) {
   // do nothing
 }
 
+
+// GAME UPDATE ======================================================
 void handle_timer_timeout(void *data) {
 	GO_GameObject_Update_All();
 	
-	// Update the terrain and dirty the gameLayer if necessary. (maybe make TerrainLayer later?)
+	// Update the terrain and dirty the backgroundLayer if necessary. (maybe make TerrainLayer later?)
 	if (terrain_update()) {
-		layer_mark_dirty(gameLayer);
+		layer_mark_dirty(backgroundLayer);
 	}
     
     timer_handle = app_timer_register(UPDATE_FREQUENCY, &handle_timer_timeout, NULL);
@@ -113,7 +126,7 @@ GO_GameObject* initialize_player() {
 	return NULL;
 }
 
-
+// GAME INIT ======================================================
 void game_init(void) {
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Game Init");
 	
@@ -138,11 +151,15 @@ void game_init(void) {
     layer_add_child(window_get_root_layer(window), (Layer *)titleLayer);*/
 	
 	
-	// Game Layer
-	//gameLayer = layer_create(GRect(0, SCREENH-terrain_height, terrain_height, terrain_width));
-	gameLayer = layer_create(GRect((SCREENW - terrain_width)/2, (SCREENW - terrain_width)/2, terrain_height+2, terrain_width+2));
-    layer_set_update_proc(gameLayer, draw_game_field);
-    layer_add_child(window_get_root_layer(window), (Layer *)gameLayer);
+	// Background Layer
+	backgroundLayer = layer_create(GRect((SCREENW - terrain_width)/2, (SCREENW - terrain_width)/2, terrain_height+2, terrain_width+2)); // draw +2 pixels for borders on four sides.
+    layer_set_update_proc(backgroundLayer, draw_background_layer);
+    layer_add_child(window_get_root_layer(window), (Layer *)backgroundLayer);
+	
+	// Sprites Layer - draw it over the terrain viewport (add +1 to x and y to account for the 1 px white border)
+	spriteLayer = layer_create(GRect(((SCREENW - terrain_width)/2)+1, ((SCREENW - terrain_width)/2)+1, terrain_height, terrain_width));
+	layer_set_update_proc(spriteLayer, draw_sprite_layer);
+	layer_add_child(window_get_root_layer(window), (Layer *)spriteLayer);
 	
 	// Initialize the terrain
 	terrain_generate();
@@ -153,8 +170,8 @@ void game_init(void) {
 	// Create Player
 	player = initialize_player();
 
-    //validBallField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(gameLayer).size.h-BALL_SIZE_HEIGHT)-1);
-    //validPaddleField = GRect(1,1,(layer_get_bounds(gameLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(gameLayer).size.h-PADDLE_HEIGHT)-2);
+    //validBallField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(backgroundLayer).size.h-BALL_SIZE_HEIGHT)-1);
+    //validPaddleField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(backgroundLayer).size.h-PADDLE_HEIGHT)-2);
 
 	
     //inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
@@ -192,7 +209,8 @@ void game_deinit(void) {
 	app_timer_cancel(timer_handle);
     //text_layer_destroy(titleLayer);
     //text_layer_destroy(scoreLayer);
-	layer_destroy(gameLayer);
+	layer_destroy(backgroundLayer);
+	layer_destroy(spriteLayer);
 	//inverter_layer_destroy(inverter_layer);
 	window_destroy(window);
 	//accel_data_service_unsubscribe();

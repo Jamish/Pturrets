@@ -23,11 +23,33 @@ void GO_GameObject_Update(GO_GameObject go) {
 	}
 }
 
+// Draw the player?
+void player_update(GO_GameObject go) {
+	
+}
+
 // Updates all the game objects at once
 void GO_GameObject_Update_All() {
 	// Call every game object's Update and update_handler (additional functionality) function
 	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
-		GO_GameObject_Update(GO_GameObjects[i]);
+		GO_GameObject go = GO_GameObjects[i];
+		GO_GameObject_Update(go);
+		switch(go.type) {
+			case GO_T_BASE:
+				//Do Nothing. Base Type.
+				break;
+			case GO_T_PLAYER:
+				player_update(go);
+				break;
+			case GO_T_ENEMY:
+				
+				break;
+			case GO_T_PROJECTILE:
+				break;
+			default:
+				break;
+			}
+		
 		//GO_GameObjects[i].update_handler(&GO_GameObjects[i]);
 		
 	}
@@ -43,7 +65,8 @@ void GO_Init_Empty(GO_GameObject *go, int id) {
 		{ 0, 0 }, // size
 		0, // grav
 		0, // active
-		1 // empty
+		1, // empty
+		NULL // GContext
 	};
 }
 
@@ -67,7 +90,7 @@ GO_GameObject* GO_New() {
 	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
 		GO_GameObject go = GO_GameObjects[i];
 		if (go.empty) {
-			app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "GO init #%d", i);
+			app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "GOID #%d init", i);
 			go.empty = 0;
 			go.active = 1;
 			return &GO_GameObjects[i];
@@ -77,6 +100,24 @@ GO_GameObject* GO_New() {
 	// Return null if the game is full.
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Game is full.");
 	return NULL;
+}
+
+// Returns the game object
+GO_GameObject* GO_Get(int id) {
+	if (id < 0 || id > MAXGAMEOBJECTS) {
+		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Requested GOID #%d out of bounds", id);
+		return NULL;
+	}
+	
+	GO_GameObject* go = &GO_GameObjects[id];
+	
+	if (go->empty) {
+		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Requested GOID #%d is empty", id);
+		return NULL;
+	}
+
+	return go;
+
 }
 
 
