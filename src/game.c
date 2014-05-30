@@ -99,21 +99,13 @@ void draw_hud_layer(struct Layer *layer, GContext *ctx) {
 	graphics_context_set_fill_color(ctx, FG_COLOR);
 	graphics_fill_rect(ctx, GRect(x1, y1, x2, y2), 0, GCornerNone); 
 	
+	
 	// Draw the angle text of the current angle
 	
 	OBJ_Player_Data* go_data = (OBJ_Player_Data*)player->data;
 	int angle = go_data->angle;
-	/*char c[3];
-	int num = angle;
-	for(int i=2;i>0&&num>0;i--){
-		c[i]=(num%10)+48;
-		num/=10;
-	}
-	graphics_draw_text(ctx, c, font, GRect(x1, y1, x2, y2), GTextAlignmentCenter, GTextOverflowModeWordWrap, NULL);*/
-	
+
 	// Draw tick marks
-	
-	
 	graphics_context_set_stroke_color(ctx, BG_COLOR); 
 	int px_per_degree = 3;
 	int degrees_per_big_tick = 10;
@@ -132,11 +124,7 @@ void draw_hud_layer(struct Layer *layer, GContext *ctx) {
 		//Convert current_px to Angle
 		int current_px = i;
 		int current_angle = last_angle - (current_px / px_per_degree);
-		
 
-	
-		
-		
 		//If angle is divisible by 10, draw it long.
 		if (current_angle % degrees_per_big_tick == 0) {
 			

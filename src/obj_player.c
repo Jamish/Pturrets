@@ -6,7 +6,7 @@
 void OBJ_Player_Update(GO_GameObject* go) {
 	OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
 	
-	int32_t turret_length = 10;
+	int32_t turret_length = 8;
 	int32_t turret_angle = TRIG_MAX_ANGLE * go_data->angle / 360;
 	go_data->turret_tip.y = (-cos_lookup(turret_angle) * turret_length / TRIG_MAX_RATIO) + go->position.y;
 	go_data->turret_tip.x = (sin_lookup(turret_angle) * turret_length / TRIG_MAX_RATIO) + go->position.x;
@@ -22,12 +22,21 @@ void OBJ_Player_Draw(GO_GameObject* go, GContext* ctx) {
 	
 	// Draw a black turret
 	graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x, go_data->turret_tip.y));
+	graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x, go_data->turret_tip.y+1));
+	//graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x, go_data->turret_tip.y-1));
+	graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x+1, go_data->turret_tip.y));
+	//graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x-1, go_data->turret_tip.y));
 	
 	// Draw a white circle at the location of the player
 	graphics_fill_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
 	
 	// Draw a black outline circle at the location of the player
 	graphics_draw_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
+	
+	// Draw a black rectangle base
+	graphics_context_set_fill_color (ctx, BG_COLOR);
+	graphics_fill_rect(ctx, GRect(go->position.x - go->size.w/2 - 1, go->position.y + 2, go->size.w + 3, go->size.h), 0, GCornerNone);
+	
 	
 	
 }
