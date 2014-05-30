@@ -11,26 +11,50 @@ void OBJ_Projectile_Update(GO_GameObject* go) {
 		GO_Destroy(go->id);
 	}
 	
-	//If the projectile is not in the air, then explode
-	if (!go->in_air) {
-		// Explode terrain
-		terrain_destroy_radius(go->position.x, go->position.y, go_data->explosion_radius);
+	//If the projectile is not in the air and isn't already exploding, then explode
+	if (!go->in_air && !go_data->is_exploding) {
+		// Trigger explosion
+		go_data->is_exploding = true;
+		go_data->explosion_step = 0;
 		
-		//Animate explosion???
+		// Disable gravity and velocity
+		go->gravity = 0;
+		go->velocity.x = 0;
+		go->velocity.y = 0;
 		
-		// Destroy self
-		GO_Destroy(go->id);
+	}
+	
+	if (go_data->is_exploding) {
+		// Explode the terrain at the new size
+		terrain_destroy_radius(go->position.x, go->position.y, go_data->explosion_step);
+		
+		// Increment animation step
+		go_data->explosion_step += 1;
+		
+		// Destroy self if animation is over
+		if (go_data->explosion_step >= go_data->explosion_radius) {
+			GO_Destroy(go->id);
+		}		
 	}
 }
 
 void OBJ_Projectile_Draw(GO_GameObject* go, GContext* ctx) {
-	//app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "player_draw (%d, %d)", (int)go->position.x, (int)go->position.y);
+	OBJ_Projectile_Data* go_data = (OBJ_Projectile_Data*)go->data;
 	
-	graphics_context_set_stroke_color (ctx, GColorBlack); 
-    graphics_context_set_fill_color (ctx, GColorBlack);  
-	
-	// Draw a circle at the location of the projectile
-	graphics_draw_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
+	// Animate explosion
+	if (go_data->is_exploding) {
+		graphics_context_set_stroke_color (ctx, BG_COLOR); 
+    	graphics_context_set_fill_color (ctx, FG_COLOR); 
+		//Draw black circles from outside in every 4 pixels
+		for (int i = go_data->explosion_step; i >= 0; i-= 4) {
+			graphics_draw_circle(ctx, GPoint(go->position.x, go->position.y), i);
+		}
+	} else {
+		// Draw a filled circle at the location of the projectile if it's not exploding
+		graphics_context_set_stroke_color (ctx, BG_COLOR); 
+		graphics_context_set_fill_color (ctx, BG_COLOR);  
+		graphics_fill_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
+	}
 }
 
 GO_GameObject* OBJ_Projectile_Init_Base(Layer* layer) {
@@ -44,11 +68,14 @@ GO_GameObject* OBJ_Projectile_Init_Base(Layer* layer) {
 		go->layer = layer;
 		go->in_air = true;
 		
+		
+		
 		//Malloc the space for Data
 		go->data = (void*)malloc(sizeof(OBJ_Projectile_Data));
 		OBJ_Projectile_Data* go_data = (OBJ_Projectile_Data*)go->data;
-		go_data->explosion_radius = 10;
+		go_data->explosion_radius = 20;
 		go_data->power = 50;
+		go_data->is_exploding = false;
 		return go;
 	}
 	

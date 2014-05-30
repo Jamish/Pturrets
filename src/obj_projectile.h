@@ -7,6 +7,8 @@ typedef struct OBJ_Projectile_Data OBJ_Projectile_Data;
 struct OBJ_Projectile_Data {
 	int explosion_radius;
 	int power;
+	int explosion_step;
+	bool is_exploding;
 };
 
 // Update function
