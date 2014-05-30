@@ -6,6 +6,14 @@
 	
 // Some collision checking with terrain
 bool terrain_at_position(int x, int y) {
+	if (x < 0 || x >= terrain_width) {
+		return false; //Never collide with the "walls"
+	}
+	
+	if (y >= terrain_height) {
+		return true; //Always collide with the "floor"	
+	}
+	
 	return bmpGetPixel(&terrain_bitmap, x, y) == terrain_color;
 }
 

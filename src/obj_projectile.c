@@ -5,6 +5,13 @@
 	
 void OBJ_Projectile_Update(GO_GameObject* go) {
 	OBJ_Projectile_Data* go_data = (OBJ_Projectile_Data*)go->data;
+	
+	//If the projectile is off the screen, then delete it.
+	if (go->position.x < 0 || go->position.y > terrain_width) {
+		GO_Destroy(go->id);
+	}
+	
+	//If the projectile is not in the air, then explode
 	if (!go->in_air) {
 		// Explode terrain
 		terrain_destroy_radius(go->position.x, go->position.y, go_data->explosion_radius);

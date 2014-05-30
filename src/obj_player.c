@@ -6,7 +6,7 @@
 void OBJ_Player_Update(GO_GameObject* go) {
 	OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
 	
-	int32_t turret_length = 15;
+	int32_t turret_length = 10;
 	int32_t turret_angle = TRIG_MAX_ANGLE * go_data->angle / 360;
 	go_data->turret_tip.y = (-cos_lookup(turret_angle) * turret_length / TRIG_MAX_RATIO) + go->position.y;
 	go_data->turret_tip.x = (sin_lookup(turret_angle) * turret_length / TRIG_MAX_RATIO) + go->position.x;

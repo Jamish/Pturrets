@@ -1,36 +1,36 @@
 {
-    "watchapp": {
-        "watchface": false
-    },
     "longName": "Ptanks",
-    "shortName": "Ptanks",
     "companyName": "JamishS",
+    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
     "capabilities": [
         ""
     ],
+    "versionLabel": "1.0.0",
+    "appKeys": {
+        "Left": 9,
+        "BG": 7,
+        "Name": 8,
+        "Right": 10
+    },
     "resources": {
         "media": [
             {
                 "file": "images/icon.png",
-                "menuIcon": true,
+                "name": "APP_ICON",
                 "type": "png",
-                "name": "APP_ICON"
+                "menuIcon": true
             },
             {
-                "file": "fonts/Orbitron_Bold.ttf",
                 "characterRegex": "[0-9a-zA-Z:\\.,]",
-                "type": "font",
-                "name": "FONT_ORBITRON_BOLD_15"
+                "file": "fonts/Orbitron_Bold.ttf",
+                "name": "FONT_ORBITRON_BOLD_15",
+                "type": "font"
             }
         ]
     },
-    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
-    "versionLabel": "1.0.0",
-    "appKeys": {
-        "Left": 9,
-        "Right": 10,
-        "BG": 7,
-        "Name": 8
+    "watchapp": {
+        "watchface": false
     },
+    "shortName": "Ptanks",
     "versionCode": 2
 }

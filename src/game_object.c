@@ -177,6 +177,7 @@ void GO_Destroy(int id) {
 		return ;
 	}
 	
+	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Deleting GOID #%d", id);
 	go->empty = 1;
 	go->active = 0;
 		

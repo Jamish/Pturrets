@@ -11,8 +11,10 @@
 Window *window;
 TextLayer *titleLayer;
 TextLayer *scoreLayer;
-Layer *spriteLayer;
+
 Layer *backgroundLayer;
+Layer *spriteLayer;
+Layer *hudLayer;
 
 // Misc
 AppTimer *timer_handle;
@@ -70,10 +72,18 @@ void draw_sprite_layer(struct Layer *layer, GContext *ctx) {
 	
 	// Draw all the game objects that are in this layer using ctx
 	GO_GameObject_Draw_All(layer, ctx);
+}
 
-
-	// Do Shit
-	//graphics_draw_bitmap_in_rect(ctx, terrain_get_bitmap(), GRect(1,1,SCREENW,SCREENW));
+void draw_hud_layer(struct Layer *layer, GContext *ctx) {
+	//app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "HUD layer drawing");
+	
+	GRect bounds = layer_get_bounds(layer);
+    graphics_context_set_stroke_color (ctx, FG_COLOR); 
+    graphics_context_set_fill_color (ctx, BG_COLOR);   
+	
+	// Frame
+    graphics_draw_rect(ctx, bounds);
+	
 }
 
 
@@ -189,6 +199,11 @@ void game_init(void) {
 	layer_set_update_proc(spriteLayer, draw_sprite_layer);
 	layer_add_child(window_get_root_layer(window), (Layer *)spriteLayer);
 	
+	// HUD Layer
+	hudLayer = layer_create(GRect(8, 144, 130, 18)); // draw the layer
+	layer_set_update_proc(hudLayer, draw_hud_layer);
+	layer_add_child(window_get_root_layer(window), (Layer *)hudLayer);
+	
 	// Initialize the terrain
 	terrain_generate();
 	
@@ -201,26 +216,13 @@ void game_init(void) {
 	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Player is on layer %p, spriteLayer is %p", player->layer, spriteLayer);
 
 	
-    //validBallField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-BALL_SIZE_WIDTH)-1,(layer_get_bounds(backgroundLayer).size.h-BALL_SIZE_HEIGHT)-1);
-    //validPaddleField = GRect(1,1,(layer_get_bounds(backgroundLayer).size.w-PADDLE_WIDTH)-2,(layer_get_bounds(backgroundLayer).size.h-PADDLE_HEIGHT)-2);
-
-	
     //inverter_layer = inverter_layer_create(GRect(0, 0, 144, 168));
     //layer_add_child(window_get_root_layer(window), inverter_layer_get_layer(inverter_layer));
 	//layer_set_hidden(inverter_layer_get_layer(inverter_layer), !option.invert);
 	
 	
 	/*
-	level = 1;
-	
-	// accelometer
-	app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "accel init");
-	accel_data_service_subscribe(0, handle_accel);
-	accel_service_set_sampling_rate(ACCEL_SAMPLING_100HZ);
-	accel_service_peek(&calibratedAccelData); //Calibrate data to initial position
-	
-    
-    
+   
 
     //Score Layer
     scoreLayer = text_layer_create(GRect(0,22,144,19));
@@ -242,6 +244,7 @@ void game_deinit(void) {
     //text_layer_destroy(scoreLayer);
 	layer_destroy(backgroundLayer);
 	layer_destroy(spriteLayer);
+	layer_destroy(hudLayer);
 	//inverter_layer_destroy(inverter_layer);
 	window_destroy(window);
 	//accel_data_service_unsubscribe();
