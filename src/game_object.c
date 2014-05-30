@@ -86,6 +86,8 @@ void GO_GameObject_Update(GO_GameObject* go) {
 		// Adjust for gravity
 		if (go->in_air) {
 			go->velocity.y += go->gravity;
+		} else {
+			go->velocity.y = 0;
 		}
 	}
 }

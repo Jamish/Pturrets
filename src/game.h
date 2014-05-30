@@ -14,11 +14,18 @@
 #define FG_COLOR GColorWhite
 #define BG_COLOR GColorBlack
 
-typedef enum Direction Direction;
-enum Direction {
-    NORTH, SOUTH, EAST, WEST
+typedef enum GameState GameState;
+
+enum GameState {
+	GS_MENU,
+	GS_PLAY_ANGLE,
+	GS_PLAY_POWER,
+	GS_PLAY_FIRE,
+	GS_PLAY_TERRAIN,
+	GS_PLAY_AI
 };
-	
+
+
 void game_deinit(void);
 void game_init(void);
 

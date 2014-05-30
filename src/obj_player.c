@@ -17,14 +17,19 @@ void OBJ_Player_Draw(GO_GameObject* go, GContext* ctx) {
 	OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
 	//app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "player_draw");
 	
-	graphics_context_set_stroke_color (ctx, GColorBlack); 
-    graphics_context_set_fill_color (ctx, GColorBlack);  
+	graphics_context_set_stroke_color (ctx, BG_COLOR); 
+    graphics_context_set_fill_color (ctx, FG_COLOR);  
 	
-	// Draw a circle at the location of the player
+	// Draw a black turret
+	graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x, go_data->turret_tip.y));
+	
+	// Draw a white circle at the location of the player
+	graphics_fill_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
+	
+	// Draw a black outline circle at the location of the player
 	graphics_draw_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);
 	
-	// Draw a cannon at the angle
-	graphics_draw_line(ctx, GPoint(go->position.x, go->position.y), GPoint(go_data->turret_tip.x, go_data->turret_tip.y));
+	
 }
 
 GO_GameObject* OBJ_Player_Init(Layer* layer) {
@@ -52,4 +57,15 @@ GO_GameObject* OBJ_Player_Init(Layer* layer) {
 
 void OBJ_Player_Destroy(GO_GameObject* go) {
 	free(go->data);
+}
+
+void OBJ_Player_Add_Angle(GO_GameObject* go, int angle) {
+	OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
+	angle += go_data->angle;
+	angle %= 360;
+	while (angle < 0) {
+		angle += 360;
+	}
+	
+	go_data->angle = angle;
 }

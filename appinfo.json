@@ -15,16 +15,22 @@
     "resources": {
         "media": [
             {
+                "characterRegex": "[0-9a-zA-Z:\\.,]",
+                "file": "fonts/wendy.ttf",
+                "name": "FONT_WENDY_16",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9a-zA-Z:\\.,]",
+                "file": "fonts/wendy.ttf",
+                "name": "FONT_WENDY_10",
+                "type": "font"
+            },
+            {
                 "file": "images/icon.png",
                 "name": "APP_ICON",
                 "type": "png",
                 "menuIcon": true
-            },
-            {
-                "characterRegex": "[0-9a-zA-Z:\\.,]",
-                "file": "fonts/Orbitron_Bold.ttf",
-                "name": "FONT_ORBITRON_BOLD_15",
-                "type": "font"
             }
         ]
     },

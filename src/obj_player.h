@@ -22,4 +22,6 @@ GO_GameObject* OBJ_Player_Init(Layer* layer);
 // Destructor
 void OBJ_Player_Destroy(GO_GameObject* go);
 
+void OBJ_Player_Add_Angle(GO_GameObject* go, int angle);
+
 #endif
