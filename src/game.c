@@ -28,12 +28,16 @@ int button_center_pressed;
 
 // Step
 int step = 0;
+int game_state = GS_PLAY_ANGLE;
 
 // Sensitivity. Used so the longer a button is pressed, the more drastic it's effect (for changing angle/power)
-int sensitivity_start_step; // The step count the timer was initiated on
+int sensitivity_key_repeat = 8; // The amount of frames before a 'press and hold' takes effect
+int sensitivity_key_repeat_step; // The step count since key repeat was initiated
+int sensitivity_start_step; // The step count the key was pressed, held, and started to repeat
+
 int sensitivity_accel = 1; // Acceleration of amount
 int sensitivity_max = 5;
-int sensitivity_frames = 12; //  Frames
+int sensitivity_frames = 12; // The number of frames between each acceleration amount
 
 // Managed Actors that we always want a reference to (no lookup)
 GO_GameObject *player;
@@ -81,8 +85,9 @@ void draw_sprite_layer(struct Layer *layer, GContext *ctx) {
 void draw_hud_layer(struct Layer *layer, GContext *ctx) {
 	//app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "HUD layer drawing");
 	
-	
-	HUD_draw_angle(layer, ctx);
+	if (game_state == GS_PLAY_ANGLE) {
+		HUD_draw_angle(layer, ctx);
+	}
 }
 
 
@@ -92,7 +97,7 @@ void up_up_handler(ClickRecognizerRef recognizer, Window *window) {
 
 void up_down_handler(ClickRecognizerRef recognizer, Window *window) {
     button_up_pressed = 1;
-	sensitivity_start_step = step;
+	sensitivity_key_repeat_step = step;
 }
 
 void down_up_handler(ClickRecognizerRef recognizer, Window *window) {
@@ -101,7 +106,7 @@ void down_up_handler(ClickRecognizerRef recognizer, Window *window) {
 
 void down_down_handler(ClickRecognizerRef recognizer, Window *window) {
     button_down_pressed = 1;
-	sensitivity_start_step = step;
+	sensitivity_key_repeat_step = step;
 }
 
 void select_up_handler(ClickRecognizerRef recognizer, Window *window) {
@@ -133,10 +138,32 @@ void handle_timer_timeout(void *data) {
 	
 	OBJ_Player_Data* go_data = (OBJ_Player_Data*)player->data;
 	
+	
 	// Calculate the amount the angle should change
-	int steps_elapsed = (step - sensitivity_start_step) / sensitivity_frames;
-	int angle_delta = 1 + steps_elapsed;
-	angle_delta = angle_delta > sensitivity_max ? sensitivity_max : angle_delta;
+	int angle_delta;
+	if (sensitivity_key_repeat_step == step) {
+		//First press of key. 
+		angle_delta = 1;
+	}
+	else if (step < sensitivity_key_repeat_step + sensitivity_key_repeat) {
+		//Wait period. Key repeat hasn't kicked in yet.
+		angle_delta = 0;
+		
+	} else {
+		//Wait period over. 
+		
+		//Reset the key_repeat_step and start the sensitivity_start_step.
+		if (sensitivity_key_repeat_step != 0) {
+			sensitivity_start_step = step;
+		}
+		sensitivity_key_repeat_step = 0;
+		
+		int steps_elapsed = (step - sensitivity_start_step) / sensitivity_frames; // the number of "step units" passed
+		angle_delta = 1 + steps_elapsed; 
+		angle_delta = angle_delta > sensitivity_max ? sensitivity_max : angle_delta; // limit to sensitivity_max
+	}
+	
+	
 	
 	if (button_down_pressed) {
 		OBJ_Player_Add_Angle(player, angle_delta);

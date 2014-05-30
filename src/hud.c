@@ -20,8 +20,6 @@ void HUD_draw_angle(struct Layer *layer, GContext *ctx) {
     graphics_context_set_stroke_color (ctx, FG_COLOR); 
 	graphics_context_set_text_color(ctx, BG_COLOR);    
 	
-	
-	
 	// Bounds of the angle meter
 	int x1 = bounds.origin.x + 2;
 	int y1 = bounds.origin.y + 2;

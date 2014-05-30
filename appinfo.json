@@ -1,5 +1,5 @@
 {
-    "longName": "Ptanks",
+    "longName": "Pturrets",
     "companyName": "JamishS",
     "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
     "capabilities": [
@@ -8,9 +8,9 @@
     "versionLabel": "1.0.0",
     "appKeys": {
         "Left": 9,
-        "BG": 7,
+        "Right": 10,
         "Name": 8,
-        "Right": 10
+        "BG": 7
     },
     "resources": {
         "media": [
@@ -37,6 +37,6 @@
     "watchapp": {
         "watchface": false
     },
-    "shortName": "Ptanks",
+    "shortName": "Pturrets",
     "versionCode": 2
 }
