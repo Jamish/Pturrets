@@ -44,13 +44,15 @@ void OBJ_Projectile_Draw(GO_GameObject* go, GContext* ctx) {
 	// Animate explosion
 	if (go_data->is_exploding) {
 		graphics_context_set_stroke_color (ctx, BG_COLOR); 
-    	graphics_context_set_fill_color (ctx, FG_COLOR); 
+    	graphics_context_set_fill_color (ctx, FG_COLOR);
+		// Draw a filled white circle at the explosion's current radius (as the background)
+		graphics_fill_circle(ctx, GPoint(go->position.x, go->position.y), go_data->explosion_step);
 		//Draw black circles from outside in every 4 pixels
 		for (int i = go_data->explosion_step; i >= 0; i-= 4) {
 			graphics_draw_circle(ctx, GPoint(go->position.x, go->position.y), i);
 		}
 	} else {
-		// Draw a filled circle at the location of the projectile if it's not exploding
+		// Draw a filled black circle at the location of the projectile if it's not exploding
 		graphics_context_set_stroke_color (ctx, BG_COLOR); 
 		graphics_context_set_fill_color (ctx, BG_COLOR);  
 		graphics_fill_circle(ctx, GPoint(go->position.x, go->position.y), go->size.w/2);

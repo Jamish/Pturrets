@@ -175,7 +175,6 @@ void GO_Destroy(int id) {
 	GO_GameObject* go = &GO_GameObjects[id];
 	
 	if (go->empty) {
-		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Deleting GOID #%d is empty", id);
 		return ;
 	}
 	
@@ -198,6 +197,16 @@ void GO_Destroy(int id) {
 			break;
 		default:
 			break;
+	}
+}
+
+
+void GO_Deinit_All() {
+	for (int i = 0; i < MAXGAMEOBJECTS; i++) {
+		GO_GameObject* go = &GO_GameObjects[i];
+		if (!go->empty && go->data != NULL) {
+			free(go->data);
+		}
 	}
 }
 

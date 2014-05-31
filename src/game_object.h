@@ -71,8 +71,10 @@ void GO_Init_Empty(GO_GameObject* go, int id);
 // Initialize All Game Objects to empty
 void GO_Init_All();
 
-// Destroys a Game Object (well, just marks it inactive)
+// Destroys a Game Object
 void GO_Destroy(int id);
+
+void GO_Deinit_All();
 
 // Returns a pointer to an empty Game Object to work with.
 GO_GameObject* GO_New();

@@ -38,7 +38,32 @@ void OBJ_Player_Draw(GO_GameObject* go, GContext* ctx) {
 	graphics_fill_rect(ctx, GRect(go->position.x - go->size.w/2 - 1, go->position.y + 2, go->size.w + 3, go->size.h), 0, GCornerNone);
 	
 	
+	// Draw the crosshair
+	int32_t crosshair_distance = 30;
+	int32_t turret_angle = TRIG_MAX_ANGLE * go_data->angle / 360;
 	
+	int y = (-cos_lookup(turret_angle) * crosshair_distance / TRIG_MAX_RATIO) + go->position.y;
+	int x = (sin_lookup(turret_angle) * crosshair_distance / TRIG_MAX_RATIO) + go->position.x;
+	
+	
+	int size = 10;
+	for (int i = 0; i <= size; i++) {
+		if (i%2 == 0) {
+			graphics_context_set_stroke_color (ctx, BG_COLOR);
+		} else {
+			graphics_context_set_stroke_color (ctx, FG_COLOR);
+		}
+		graphics_draw_pixel(ctx, GPoint(x - (size/2) + i, y));
+	}
+	
+	for (int i = 0; i <= size; i++) {
+		if (i%2 == 0) {
+			graphics_context_set_stroke_color (ctx, BG_COLOR);
+		} else {
+			graphics_context_set_stroke_color (ctx, FG_COLOR);
+		}
+		graphics_draw_pixel(ctx, GPoint(x, y - (size/2) + i));
+	}
 }
 
 GO_GameObject* OBJ_Player_Init(Layer* layer) {
@@ -56,7 +81,7 @@ GO_GameObject* OBJ_Player_Init(Layer* layer) {
 		//Malloc the space for Data
 		go->data = (void*)malloc(sizeof(OBJ_Player_Data));
 		OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
-		go_data->angle = 60;
+		go_data->angle = 30;
 		go_data->power = 50;
 		return go;
 	}
@@ -77,4 +102,14 @@ void OBJ_Player_Add_Angle(GO_GameObject* go, int angle) {
 	}
 	
 	go_data->angle = angle;
+}
+
+void OBJ_Player_Add_Power(GO_GameObject* go, int power) {
+	OBJ_Player_Data* go_data = (OBJ_Player_Data*)go->data;
+	power += go_data->power;
+	
+	power = power > 100 ? 100 : power;
+	power = power < 0 ? 0 : power;
+
+	go_data->power = power;
 }
