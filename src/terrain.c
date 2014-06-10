@@ -45,7 +45,7 @@ void terrain_generate(void) {
 	// Starting range value
 	int range = terrain_height/2 - 30;
 	
-	// Value of 1 creates varied terrain. Value of 2+ creates smooth terrain.
+	// Value of 1 creates varied terrain. Value of 2+ creates smooth terrain. The divisor is what reduces the range for each iteration.
 	float range_divisor = 1.2F;
 	
 	// 2^7 = 128
