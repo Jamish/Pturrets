@@ -34,32 +34,40 @@ void terrain_generate(void) {
 	const int total_segments = 128;
 	int16_t height_map[total_segments];
 	
-	// Start with a horizontal line
-	for (int i = 0; i < total_segments; i++) {
-		height_map[i] = 0;
-	}
-	
 	// Seed
 	srand(time(NULL));
 	
 	// Starting range value
 	int range = terrain_height/2 - 30;
 	
+	// Start with a horizontal line
+	
+	int initial_offset = -range + (rand() % (2 * range));	
+	
+	for (int i = 0; i < total_segments; i++) {
+		height_map[i] = (initial_offset/2) + ((i*(initial_offset/2))/total_segments);
+	}
+	
+	
+	
+	
+	
 	// Value of 1 creates varied terrain. Value of 2+ creates smooth terrain. The divisor is what reduces the range for each iteration.
-	float range_divisor = 1.2F;
+	float range_divisor = 2.0F;
 	
 	// 2^7 = 128
 	// This is the number of times we will divide the line into midpoints.
-	for (int p = 0; p < 7; p++) {
-		app_log(APP_LOG_LEVEL_DEBUG, __FILE__ , __LINE__ , "Range is %d", range);
+	for (int p = 0; p < 5; p++) {
+		
         int segs = pow(p, 2); // Number of segments in this current iteration.
+
         for (int j = 0; j < segs; j++) {
             int lo = -range;
             int hi = +range;
             int change = lo + (rand() % (hi - lo));
-			
-			int start = j / segs * total_segments;
-			int end = (j+1) / segs * total_segments;
+						
+			int start = j * (total_segments / segs);
+			int end = (j+1) * (total_segments / segs) + 1;
            			
 			// Displace the midpoints
 			int len = end-start;
