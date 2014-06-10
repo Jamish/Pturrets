@@ -1,42 +1,42 @@
 {
-    "appKeys": {
-        "Left": 9,
-        "Name": 8,
-        "BG": 7,
-        "Right": 10
-    },
-    "longName": "Pturrets",
-    "capabilities": [
-        ""
-    ],
-    "versionLabel": "1.0.0",
-    "companyName": "JamishS",
+    "versionCode": 2,
     "resources": {
         "media": [
             {
-                "file": "fonts/wendy.ttf",
                 "type": "font",
                 "name": "FONT_WENDY_10",
+                "file": "fonts/wendy.ttf",
                 "characterRegex": "[0-9a-zA-Z:\\.,\\s]"
             },
             {
-                "file": "fonts/wendy.ttf",
                 "type": "font",
                 "name": "FONT_WENDY_16",
+                "file": "fonts/wendy.ttf",
                 "characterRegex": "[0-9a-zA-Z:\\.,\\s]"
             },
             {
-                "file": "images/icon.png",
+                "menuIcon": true,
                 "type": "png",
                 "name": "APP_ICON",
-                "menuIcon": true
+                "file": "images/icon.png"
             }
         ]
     },
     "watchapp": {
         "watchface": false
     },
-    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
+    "appKeys": {
+        "BG": 7,
+        "Name": 8,
+        "Left": 9,
+        "Right": 10
+    },
     "shortName": "Pturrets",
-    "versionCode": 2
+    "capabilities": [
+        ""
+    ],
+    "uuid": "0b545463-718c-4e54-b84b-7abca5408aef",
+    "versionLabel": "1.0.0",
+    "longName": "Pturrets",
+    "companyName": "JamishS"
 }
