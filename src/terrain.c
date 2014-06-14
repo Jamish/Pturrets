@@ -48,10 +48,6 @@ void terrain_generate(void) {
 		height_map[i] = (initial_offset/2) + ((i*(initial_offset/2))/total_segments);
 	}
 	
-	
-	
-	
-	
 	// Value of 1 creates varied terrain. Value of 2+ creates smooth terrain. The divisor is what reduces the range for each iteration.
 	float range_divisor = 2.0F;
 	

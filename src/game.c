@@ -229,7 +229,7 @@ void handle_timer_timeout(void *data) {
 			OBJ_Player_Add_Power(player, setting_delta);
 		}
 		if (button_center_just_pressed) {
-			OBJ_Projectile_Init(spriteLayer, go_data->turret_tip.x, go_data->turret_tip.y, go_data->angle, go_data->power);
+			OBJ_Projectile_Init(spriteLayer, go_data->turret_tip.x, go_data->turret_tip.y, go_data->angle, go_data->power, GO_PT_THREE_SHOT);
 	    }
 	}
 		
