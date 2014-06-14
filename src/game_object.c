@@ -26,9 +26,9 @@ void GO_GameObject_Update(GO_GameObject* go) {
 		// When the ground is detected at the future spot, we must iterate from the current spot to the future spot and move the object to the LAST empty position.
 		if (terrain_at_position(next_x, next_y)) {
 			go->in_air = false;
-			// The maximum number of pixels to test is just the largest of the two distances, since we're taking the Manhattan distance
-			float xdist = abs(x) + abs(next_x);
-			float ydist = abs(y) + abs(next_y);
+			// The maximum number of pixels to test is just the largest of the two velocities, since we're taking the Manhattan distance
+			float xdist = abs(go->velocity.x);
+			float ydist = abs(go->velocity.y);
 			
 			float dist = xdist > ydist ? xdist : ydist;
 			

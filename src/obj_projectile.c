@@ -107,7 +107,7 @@ GO_GameObject* OBJ_Projectile_Init(Layer* layer, float x, float y, int angle, in
 			case GO_PT_THREE_SHOT_CHILD:
 				go->size.w = 2;
 				go->size.h = 2;
-				go_data->explosion_radius = 5;
+				go_data->explosion_radius = 8;
 				go_data->power = 20;
 			
 				break;
