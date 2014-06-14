@@ -22,40 +22,39 @@ void GO_GameObject_Update(GO_GameObject* go) {
 		float next_x = x + go->velocity.x;
 		float next_y = y + go->velocity.y;
 		
-		// Check for the ground before moving
-		// When the ground is detected at the future spot, we must iterate from the current spot to the future spot and move the object to the LAST empty position.
-		if (terrain_at_position(next_x, next_y)) {
-			go->in_air = false;
-			// The maximum number of pixels to test is just the largest of the two velocities, since we're taking the Manhattan distance
-			float xdist = abs(go->velocity.x);
-			float ydist = abs(go->velocity.y);
+		// Check for the ground before moving, every pixel.
+
 			
-			float dist = xdist > ydist ? xdist : ydist;
-			
-			//Iterate once for the maximum number of pixels.
-			float xcheck = x; //xcheck is the current X position to check for collision
-			float ycheck = y; //ycheck is the current Y position to check for collision
-			
-			//Divide the xdist and ydist by dist to get the step factor for each dimension. Each iteration will increment the position by that step factor. The position will be incremented with proper signage.
-			float xstep = xdist/dist;
-			float ystep = ydist/dist;
-			xstep = x < next_x ? xstep : -xstep;
-			ystep = y < next_y ? ystep : -ystep;
-			for (int i = 0; i < dist; i++) { // should be <=?
-				//Compare
-				if (terrain_at_position(xcheck, ycheck)) {
-					//Terrain was found. Move to the previous position.
-					next_x = xcheck - xstep;
-					next_y = ycheck - ystep;
-					break;
-				}
-				
-				//Increment by step
-				xcheck += xstep;
-				ycheck += ystep;
-				
-				//If we didn't find terrain in this distance, we probably have a rounding error. next_x and next_y will remain unchanged and we just jump to that spot regardless. 
+		// The maximum number of pixels to test is just the largest of the two velocities, since we're taking the Manhattan distance
+		float xdist = abs(go->velocity.x);
+		float ydist = abs(go->velocity.y);
+		
+		float dist = xdist > ydist ? xdist : ydist;
+		
+		//Iterate once for the maximum number of pixels.
+		float xcheck = x; //xcheck is the current X position to check for collision
+		float ycheck = y; //ycheck is the current Y position to check for collision
+		
+		//Divide the xdist and ydist by dist to get the step factor for each dimension. Each iteration will increment the position by that step factor. The position will be incremented with proper signage.
+		float xstep = xdist/dist;
+		float ystep = ydist/dist;
+		xstep = x < next_x ? xstep : -xstep;
+		ystep = y < next_y ? ystep : -ystep;
+		for (int i = 0; i <= dist; i++) { // should be <=?
+			//Compare
+			if (terrain_at_position(xcheck, ycheck)) {
+				//Terrain was found. Move to the previous position.
+				go->in_air = false;
+				next_x = xcheck - xstep;
+				next_y = ycheck - ystep;
+				break;
 			}
+			
+			//Increment by step
+			xcheck += xstep;
+			ycheck += ystep;
+			
+			//If we didn't find terrain in this distance, there is no collision.
 		}
 		
 		// Adjust position

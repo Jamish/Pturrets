@@ -89,6 +89,10 @@ void terrain_generate(void) {
 		GRect rect = { { rect_x, rect_y }, {rect_w, rect_h} };
 		bmpFillRect(&terrain_bitmap, rect, terrain_color);
 	}
+	
+	//Vertical bar to test pixel-by-pixel collision
+	//GRect rect2 = { { 64, 0 }, {1, 32} };
+	//bmpFillRect(&terrain_bitmap, rect2, terrain_color);
 }
 
 // Shifts every free-standing terrain pixel down by one
